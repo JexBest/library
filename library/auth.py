@@ -33,45 +33,50 @@ def auth_user(file_auth=auth_json):
     auth_user = {}
     next_id = 1
     auth = False
-    try:
-        try:
-            with open(file_auth, 'r') as file:
-                auth_data = json.load(file)
-        except FileNotFoundError:
-            auth_data = {}
-        user_name = input("Для доступа к библиотеке введите свое имя: ")
-        if user_name in auth_data:
-            while True:
-                user_pswd = input("Введите ваш пароль: ")
-                #for name, data in auth_data.items():
-                if auth_data[user_name]["pswd"] == user_pswd:
-                    print("Успешный вход, можете пользоватся библиотекой!")
-                    log_action(f"Пользователь '{user_name}' успешно вошёл в систему.", user_name)
-                    auth = True
-                else:
-                    print("Не верный пароль, повторите ввод!")
-                    log_action(f"Пользователь '{user_name}' ввел не верный пароль.", user_name)
+    user_name = input("Для доступа к библиотеке введите свое имя: ")
 
-        else:
-            print("Вы новый пользователь!")
-            log_action(f"В систему заходит новый пользователь'{user_name}'.", user_name)
-            next_id = len(auth_data) + 1
-            while True:
-                new_pswd = input("Придумайте пароль: ")
-                check_new_pswd = input("Повторите ввод пароля: ")
-                if new_pswd == check_new_pswd:
-                    new_user_object = User(next_id, user_name, new_pswd)
-                    auth_data[user_name] =new_user_object.to_dict()
-                    with open(file_auth, 'w') as file:
-                        json.dump(auth_data, file, indent=4, ensure_ascii=False)
-                    print("Вы успешно зарегистрированы в программе.") 
-                    log_action(f"Пользователь '{user_name}' успешно зарегистрировался.", user_name) 
-                    auth = True
-                    break
-                else:
-                    print("Введенные пароли не совпадают, повторите ввод")
-    except Exception as e:
-        print(f"Возникла ошибка {e}")
+    try:
+        with open(file_auth, 'r') as file:
+            auth_data = json.load(file)
+    except FileNotFoundError:
+        auth_data = {}  # Если файл не найден, создаём пустую базу
+
+    if user_name in auth_data:
+        while not auth:
+            user_pswd = input("Введите ваш пароль: ")
+            if auth_data[user_name]["pswd"] == user_pswd:
+                auth = True 
+                print("Успешный вход, можете пользоваться библиотекой!")
+                print(auth) 
+                log_action(f"Пользователь '{user_name}' успешно вошёл в систему.", user_name)
+                auth = True  # Возвращаем True при успешной авторизации
+            else:
+                print("Неверный пароль, попробуйте ещё раз.")
+                log_action(f"Пользователь '{user_name}' ввёл неверный пароль.", user_name)
+    else:
+        # Регистрация нового пользователя
+        print("Вы новый пользователь!")
+        log_action(f"В систему заходит новый пользователь '{user_name}'.", user_name)
+        next_id = len(auth_data) + 1
+        while not auth:
+            new_pswd = input("Придумайте пароль: ")
+            check_new_pswd = input("Повторите ввод пароля: ")
+            if new_pswd == check_new_pswd:
+                auth = True 
+                new_user_object = User(next_id, user_name, new_pswd)
+                auth_data[user_name] = new_user_object.to_dict()
+                with open(file_auth, 'w') as file:
+                    json.dump(auth_data, file, indent=4, ensure_ascii=False)
+                print("Вы успешно зарегистрированы в программе.")
+                log_action(f"Пользователь '{user_name}' успешно зарегистрировался.", user_name)
+                return True  # Возвращаем True при успешной регистрации
+            else:
+                print("Пароли не совпадают, повторите ввод.")
+    print(auth) 
+    return auth 
+    # Если авторизация не удалась
+
+
 
 
 auth_user()

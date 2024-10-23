@@ -1,6 +1,35 @@
 from datetime import datetime
 import json
 import os
+
+from auth import auth_user 
+def main_library_function():
+    while True:
+        command = input("Для работы с библиотекой введите: 'добавить', 'изменить', 'удалить', 'просмотр', 'поиск', 'выйти': ").lower()
+        if command == "добавить":
+            добавить_книгу(books)
+        elif command == "просмотр":
+            просмотр_книги(books)
+        elif command == "удалить":
+            удалить_книгу(books)
+        elif command == "изменить":
+            изменить_книгу(books)
+        elif command == "поиск":
+            поиск_книги(books)
+        elif command == "выйти":
+            сохранение_json(books)
+            break
+        else:
+            print("Не корректный ввод, повторите запрос!")
+
+
+# Вызов функции авторизации
+if auth_user():
+    print("Авторизация пройдена, добро пожаловать в библиотеку!")
+    main_library_function()
+else:
+    print("Авторизация не пройдена.")
+
 class Book:
     def __init__(self, name, author, year, genre):
         self.name = name
@@ -223,20 +252,3 @@ def сохранение_json(books, filename=books_json):
 books = чтение_бд()
 
 
-while True:
-    command = input("Для работы с библиотекой введите: 'добавить', 'изменить', 'удалить', 'просмотр', 'поиск', 'выйти': ").lower()
-    if command == "добавить":
-        добавить_книгу(books)
-    elif command == "просмотр":
-        просмотр_книги(books)
-    elif command == "удалить":
-        удалить_книгу(books)
-    elif command == "изменить":
-        изменить_книгу(books)
-    elif command == "поиск":
-        поиск_книги(books)
-    elif command == "выйти":
-        сохранение_json(books)
-        break
-    else:
-        print("Не корректный ввод, повторите запрос!")
