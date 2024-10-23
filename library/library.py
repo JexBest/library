@@ -1,3 +1,6 @@
+from datetime import datetime
+import json
+import os
 class Book:
     def __init__(self, name, author, year, genre):
         self.name = name
@@ -9,7 +12,12 @@ class Book:
         print(f"Название: {self.name}, Автор: {self.author}, Год: {self.year}, Жанр: {self.genre}")
 import json
 #wdaawdad
-def чтение_бд(filename="books.json"):
+
+books_dir = "library/books"
+os.makedirs(books_dir, exist_ok=True)
+books_json = os.path.join(books_dir, "books.json")
+
+def чтение_бд(filename=books_json):
     books = {}
     try:
         with open(filename, 'r', encoding='utf-8') as file:
@@ -203,7 +211,7 @@ def изменить_книгу(books):
         else:
             print("Некорректный выбор! Повторите ввод!")
 
-def сохранение_json(books, filename="books.json"):
+def сохранение_json(books, filename=books_json):
     book_save = {name: {"name": book.name, "author": book.author, "year": book.year, "genre": book.genre}
                 for name, book in books.items()}
     with open(filename, 'w', encoding='utf-8') as file:
