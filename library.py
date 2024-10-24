@@ -248,10 +248,9 @@ def main_library_function():
 
 print("Запуск авторизации...")
 from auth import auth_user 
-print("еще один отладчик запустился")
 # Вызов функции авторизации
 if auth_user():
-    print("Авторизация пройдена, добро пожаловать в библиотеку!")
+    print("Вход в библиотеку.....")
     books = чтение_бд()
     main_library_function()
 else:

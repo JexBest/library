@@ -34,8 +34,6 @@ def auth_user(file_auth=auth_json):
     next_id = 1
     auth = False
     user_name = input("Для доступа к библиотеке введите своё имя: ")
-    print(f"Введено имя пользователя: {user_name}")
-
     try:
         with open(file_auth, 'r') as file:
             auth_data = json.load(file)
