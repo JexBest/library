@@ -33,7 +33,8 @@ def auth_user(file_auth=auth_json):
     auth_user = {}
     next_id = 1
     auth = False
-    user_name = input("Для доступа к библиотеке введите свое имя: ")
+    user_name = input("Для доступа к библиотеке введите своё имя: ")
+    print(f"Введено имя пользователя: {user_name}")
 
     try:
         with open(file_auth, 'r') as file:
@@ -41,15 +42,15 @@ def auth_user(file_auth=auth_json):
     except FileNotFoundError:
         auth_data = {}  # Если файл не найден, создаём пустую базу
 
+    # Проверка, если пользователь существует
     if user_name in auth_data:
         while not auth:
             user_pswd = input("Введите ваш пароль: ")
             if auth_data[user_name]["pswd"] == user_pswd:
                 auth = True 
                 print("Успешный вход, можете пользоваться библиотекой!")
-                print(auth) 
                 log_action(f"Пользователь '{user_name}' успешно вошёл в систему.", user_name)
-                return auth   # Возвращаем True при успешной авторизации
+                return True  # Успешная авторизация
             else:
                 print("Неверный пароль, попробуйте ещё раз.")
                 log_action(f"Пользователь '{user_name}' ввёл неверный пароль.", user_name)
@@ -69,13 +70,13 @@ def auth_user(file_auth=auth_json):
                     json.dump(auth_data, file, indent=4, ensure_ascii=False)
                 print("Вы успешно зарегистрированы в программе.")
                 log_action(f"Пользователь '{user_name}' успешно зарегистрировался.", user_name)
-                return auth  # Возвращаем True при успешной регистрации
+                return True  # Успешная регистрация
             else:
                 print("Пароли не совпадают, повторите ввод.")
-    print(auth) 
-    return auth 
-    # Если авторизация не удалась
 
-auth_user()
+    return False  # Возвращаем False, если авторизация не удалась
+
+if __name__ == "main":
+    auth_user()
 
 

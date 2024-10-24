@@ -1,8 +1,10 @@
 from datetime import datetime
 import json
 import os
+import json
 
-from auth import auth_user 
+
+
 class Book:
     def __init__(self, name, author, year, genre):
         self.name = name
@@ -12,8 +14,8 @@ class Book:
 
     def display_info(self):
         print(f"Название: {self.name}, Автор: {self.author}, Год: {self.year}, Жанр: {self.genre}")
-import json
-#wdaawdad
+
+
 books_dir = "library/books"
 os.makedirs(books_dir, exist_ok=True)
 books_json = os.path.join(books_dir, "books.json")
@@ -244,7 +246,9 @@ def main_library_function():
         else:
             print("Не корректный ввод, повторите запрос!")
 
-
+print("Запуск авторизации...")
+from auth import auth_user 
+print("еще один отладчик запустился")
 # Вызов функции авторизации
 if auth_user():
     print("Авторизация пройдена, добро пожаловать в библиотеку!")
