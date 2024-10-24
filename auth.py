@@ -48,7 +48,7 @@ def auth_user(file_auth=auth_json):
                 auth = True 
                 print("Успешный вход, можете пользоваться библиотекой!")
                 log_action(f"Пользователь '{user_name}' успешно вошёл в систему.", user_name)
-                return True  # Успешная авторизация
+                return user_name  # Успешная авторизация
             else:
                 print("Неверный пароль, попробуйте ещё раз.")
                 log_action(f"Пользователь '{user_name}' ввёл неверный пароль.", user_name)
@@ -68,13 +68,15 @@ def auth_user(file_auth=auth_json):
                     json.dump(auth_data, file, indent=4, ensure_ascii=False)
                 print("Вы успешно зарегистрированы в программе.")
                 log_action(f"Пользователь '{user_name}' успешно зарегистрировался.", user_name)
-                return True  # Успешная регистрация
+                return user_name  # Успешная регистрация
             else:
                 print("Пароли не совпадают, повторите ввод.")
 
-    return False  # Возвращаем False, если авторизация не удалась
+    return False 
+    pass # Возвращаем False, если авторизация не удалась
 
-if __name__ == "main":
+if __name__ == "__main__":
     auth_user()
+    log_action()
 
 

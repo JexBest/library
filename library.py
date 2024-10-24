@@ -50,6 +50,11 @@ def добавить_книгу(books):
         if new_book == "стоп":
             break
         elif new_book != "":
+            count_books = len(books)
+            print(count_books)
+            if count_books > 7:
+                print ("Количество введеных книг превысело лимита в 7 книг, вы не можете добавить больше!")
+                break
             new_author = input("Введите имя автора книги: ") 
             while True:
                 new_yers = input("Введите год выпуска книги: ")
@@ -68,7 +73,7 @@ def добавить_книгу(books):
         else:
             ("Не корректный ввод, повторите запрос!")
 
-def просмотр_книги(books):
+def просмотр_книги(books, user_name):
     if books:
         print("\nСписок книг")
         for i in books.values():
@@ -89,6 +94,32 @@ def удалить_книгу(books):
             break
         else:
             print("Книга не найдена, повторите ввод")
+
+def сортировка_книг(books):
+    while True:
+        sort_type = input("Выберите критерий сортировки ('название', 'автор', 'год' или 'выход' для завершения): ").lower()
+        if sort_type == "название":
+            sorted_books = sorted(books.values(), key=lambda book: book.name)
+            for book in sorted_books:
+                book.display_info()
+        elif sort_type == "автор":
+            sorted_books = sorted(books.values(), key=lambda book: book.author)
+            for book in sorted_books:
+                book.display_info()
+        elif sort_type == "год":
+            sorted_books = sorted(books.values(), key=lambda book: int(book.year))
+            for book in sorted_books:
+                book.display_info()
+        elif sort_type == "выход":
+            print("Выход из сортировки")
+            break
+        else:
+            print("Не верно введено значение, повторите ввод!")
+            continue
+    print("\nСписок отсорированных книгЖ")
+    for book in sorted_books:
+        book.display_info()
+
 
 
 def поиск_книги(books):
@@ -222,41 +253,48 @@ def сохранение_json(books, filename=books_json):
     print(f"Импорт библиотеке в форма json успешно завершон")
 
 
+print("До импорта лога")
+from auth import log_action
+print("после импорта лога")
 
 
-
-
-
-def main_library_function():
+def main_library_function(user_name):
     while True:
-        command = input("Для работы с библиотекой введите: 'добавить', 'изменить', 'удалить', 'просмотр', 'поиск', 'выйти': ").lower()
+        command = input("Для работы с библиотекой введите: 'добавить', 'изменить', 'удалить', 'просмотр', 'поиск', 'сортировка', 'выйти': ").lower()
         if command == "добавить":
-            добавить_книгу(books)
+            добавить_книгу(books, user_name)
         elif command == "просмотр":
-            просмотр_книги(books)
+            просмотр_книги(books, user_name)
+            log_action(f"Пользователь {user_name}, выборал пункт {command}", user_name)
         elif command == "удалить":
-            удалить_книгу(books)
+            удалить_книгу(books, user_name)
         elif command == "изменить":
-            изменить_книгу(books)
+            изменить_книгу(books, user_name)
         elif command == "поиск":
-            поиск_книги(books)
+            поиск_книги(books, user_name)
+        elif command == "сортировка":
+            сортировка_книг(books, user_name)
         elif command == "выйти":
-            сохранение_json(books)
+            сохранение_json(books, user_name)
             break
         else:
             print("Не корректный ввод, повторите запрос!")
 
 print("Запуск авторизации...")
 from auth import auth_user 
+print("После импорта авторизации")
+
 # Вызов функции авторизации
 if auth_user():
     print("Вход в библиотеку.....")
     books = чтение_бд()
-    main_library_function()
+    user_name = auth_user()
+    main_library_function(user_name)
 else:
     print("Авторизация не пройдена.")
 
 
+print(user_name)
 
 
 
