@@ -16,6 +16,14 @@ class Book:
         print(f"Название: {self.name}, Автор: {self.author}, Год: {self.year}, Жанр: {self.genre}")
 
 
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "author": self.author,
+            "year": self.year,
+            "genre": self.genre
+        }
+
 books_dir = "library/books"
 os.makedirs(books_dir, exist_ok=True)
 books_json = os.path.join(books_dir, "books.json")
@@ -43,7 +51,7 @@ def чтение_бд(filename=books_json):
     return books
 #коммент
 
-def добавить_книгу(books):
+def добавить_книгу(books, user_name):
     while True:
 
         new_book = input("Введите название книги, или стоп для завершения: ")
@@ -65,7 +73,7 @@ def добавить_книгу(books):
                     print("Значение не является числом!")
 
             new_genre = input("Введите жанр книги: ")
-
+            log_action(f"Пользователь '{user_name}', добавил новую книгу со следующими параметрами: Название - '{new_book}', Автор - '{new_author}', Год издания - '{new_yers}' , Жанр - '{new_genre} '", user_name)
             books[new_book] = Book(new_book, new_author, new_yers, new_genre)
             print(f"Книга: {new_book}, Автора: {new_author}, {new_yers} года выпуска в жанре {new_genre}- успешно добавлена!")
             books[new_book].display_info()
@@ -81,7 +89,7 @@ def просмотр_книги(books, user_name):
     else:
         print("\nКниг в бибилиотеке нет!")
 
-def удалить_книгу(books):
+def удалить_книгу(books, user_name):
     print("\nСписок книг в библиотеке: ")
     for i in books.values():
         i.display_info()
@@ -90,7 +98,9 @@ def удалить_книгу(books):
         if del_book in books:
             del books[del_book]
             print(f"Книга {del_book} успешно удалена")
+            log_action(f"Пользователь '{user_name}', удалил книгу  '{del_book}'", user_name)
         elif del_book == "стоп":
+            log_action(f"Пользователь '{user_name}', вышел из меню удаления", user_name)
             break
         else:
             print("Книга не найдена, повторите ввод")
@@ -122,7 +132,7 @@ def сортировка_книг(books):
 
 
 
-def поиск_книги(books):
+def поиск_книги(books, user_name):
     while True:
         search_type = input("Введите критерий поиска ('название', 'автор', 'жанр', 'год' или 'выход' для завершения): ").lower()
         if search_type == "название":
@@ -131,27 +141,33 @@ def поиск_книги(books):
             for book in books.values():
                 if search_value.lower() in book.name.lower():
                     book.display_info()
+                    log_action(f"Пользователь '{user_name}', успешно находит книгу '{search_value}'", user_name)
                     found = True
             if not found:
                 print(f"Книга по введенному значению '{search_value}' не найдена")
+                log_action(f"Пользователь '{user_name}', не нашел искомую книгу '{search_value}'", user_name)
         elif search_type == "автор":
             search_value = input("Введите автора для поиска: ").strip()
             found = False
             for book in books.values():
                 if search_value.lower() in book.author.lower():
+                    log_action(f"Пользователь '{user_name}', нашел книгу по автору '{search_value}'", user_name)
                     book.display_info()
                     found = True
             if not found:
                 print(f"Книга по введенному значению '{search_value}' не найдена")
+                log_action(f"Пользователь '{user_name}', не нашел книгу по автору '{search_value}'", user_name)
         elif search_type == "жанр":
             search_value = input("Введите жанр для поиска: ").strip()
             found = False
             for book in books.values():
                 if search_value.lower() in book.genre.lower():
+                    log_action(f"Пользователь '{user_name}', нашел книгу по жанру '{search_value}'", user_name)
                     book.display_info()
                     found = True
             if not found:
                 print(f"Книга по введенному значению '{search_value}' не найдена")
+                log_action(f"Пользователь '{user_name}', не нашел книгу по жанру '{search_value}'", user_name)
         elif search_type == "год":
             search_value = input("Введите год для поиска: ").strip()
             try:
@@ -159,16 +175,21 @@ def поиск_книги(books):
                 found = False
                 for book in books.values():
                     if search_value == int(book.year):
+                        log_action(f"Пользователь '{user_name}', нашел книгу по году '{search_value}'", user_name)
                         book.display_info()
                         found = True
                 if not found:
                     print(f"Книга по введенному значению '{search_value}'год, не найдена")
+                    log_action(f"Пользователь '{user_name}', не нашел книгу по году '{search_value}'", user_name)
             except ValueError:
                 print("Год должен быть цифрами")
+                log_action(f"Пользователь '{user_name}', ввел не верное значение в поиске по году '{search_value}'", user_name)
         elif search_type == "выход":
+            log_action(f"Пользователь '{user_name}', вышел из поиска книг", user_name)
             break
         else:
             print("Не корректный ввод, попробуйте еще раз!")
+            log_action(f"Пользователь '{user_name}', ввел не верное значение  '{search_type}'", user_name)
 
         
 
@@ -178,7 +199,7 @@ def поиск_книги(books):
 
 
 
-def изменить_книгу(books):
+def изменить_книгу(books, user_name):
     print("\nСписок книг в библиотеке: ")
     for i in books.values():
         i.display_info()
@@ -192,6 +213,7 @@ def изменить_книгу(books):
                         if new_choise is not None and new_choise.strip() != "":
                             books[new_choise] = books.pop(choise_name)
                             books[new_choise].name = new_choise
+                            log_action(f"Пользователь '{user_name}', сдела изменение в названии кники с {choise_name} на '{new_choise}'", user_name)
                             print(f"Название книги изменилось с {choise_name} на {new_choise}")
                             break
                         else:
@@ -206,6 +228,7 @@ def изменить_книгу(books):
                     if new_author is not None and new_author.strip() != "":
                         books[choise_author].author = new_author
                         print(f"Автор книги '{choise_author}' успешно изменён на '{new_author}'.")
+                        log_action(f"Пользователь '{user_name}', сдела изменение в книге {choise_author} Автора с {choise_name} на '{new_choise}'", user_name)
                         break
                     else:
                         print("Значение для автора не может быть пустым, повторите ввод!")
@@ -220,6 +243,7 @@ def изменить_книгу(books):
                         new_year = int(new_year)
                         books[choise_year].year = new_year
                         print(f"Год для книги {choise_year} успешно изменен на {new_year}")
+                        log_action(f"Пользователь '{user_name}', сдела изменение в книге '{choise_year}' года издания на '{new_year}'", user_name)
                         break
                     except ValueError:
                         print("Год должен быть числовым значением, повторите ввод!")
@@ -234,12 +258,14 @@ def изменить_книгу(books):
                     if new_genre is not None and new_genre.strip() != "":
                         books[choise_genre].genre = new_genre
                         print(f"Жанр для книги {choise_genre} успешно изменён на {new_genre}")
+                        log_action(f"Пользователь '{user_name}', сдела изменение в книге '{choise_genre}' новый жано '{new_genre}'", user_name)
                         break
                     else:
                         print("Жанр не был изменён, введите корректный жанр.")
             else:
                print("Книга в библиотеке на найдена!")     
         elif choise == "стоп":
+            log_action(f"Пользователь '{user_name}', вышел из меню редактирования книг", user_name)
             break
         
         else:
@@ -252,10 +278,18 @@ def сохранение_json(books, filename=books_json):
         json.dump(book_save, file, ensure_ascii=False, indent = 4)
     print(f"Импорт библиотеке в форма json успешно завершон")
 
+def сохранение_резерва(books, backup_dir = "backup"):
+    os.makedirs(backup_dir, exist_ok=True)
 
-print("До импорта лога")
-from auth import log_action
-print("после импорта лога")
+    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    backup_file = os.path.join(backup_dir, f"backup_{current_time}.json")
+
+    with open(backup_file, 'w', encoding='utf-8') as file:
+        json.dump({name: book.to_dict() for name, book in books.items()}, file, ensure_ascii=False, indent=4)
+    
+    print(f"Резервная копия создана: {backup_file}")
+
+
 
 
 def main_library_function(user_name):
@@ -263,33 +297,43 @@ def main_library_function(user_name):
         command = input("Для работы с библиотекой введите: 'добавить', 'изменить', 'удалить', 'просмотр', 'поиск', 'сортировка', 'выйти': ").lower()
         if command == "добавить":
             добавить_книгу(books, user_name)
+            log_action(f"Пользователь '{user_name}', выборал пункт '{command}'", user_name)
         elif command == "просмотр":
             просмотр_книги(books, user_name)
-            log_action(f"Пользователь {user_name}, выборал пункт {command}", user_name)
+            log_action(f"Пользователь '{user_name}', выборал пункт '{command}'", user_name)
         elif command == "удалить":
             удалить_книгу(books, user_name)
+            log_action(f"Пользователь '{user_name}', выборал пункт '{command}'", user_name)
         elif command == "изменить":
             изменить_книгу(books, user_name)
+            log_action(f"Пользователь '{user_name}', выборал пункт '{command}'", user_name)
         elif command == "поиск":
             поиск_книги(books, user_name)
+            log_action(f"Пользователь '{user_name}', выборал пункт '{command}'", user_name)
         elif command == "сортировка":
             сортировка_книг(books, user_name)
+            log_action(f"Пользователь '{user_name}', выборал пункт '{command}'", user_name)
         elif command == "выйти":
             сохранение_json(books, user_name)
+            сохранение_резерва(books)
+            log_action(f"Пользователь '{user_name}', выборал пункт '{command}'", user_name)
             break
         else:
             print("Не корректный ввод, повторите запрос!")
+print("До импорта лога")
+from auth import log_action
+print("после импорта лога")
 
 print("Запуск авторизации...")
 from auth import auth_user 
 print("После импорта авторизации")
-
+user_name = auth_user()
 # Вызов функции авторизации
-if auth_user():
+if user_name:
     print("Вход в библиотеку.....")
     books = чтение_бд()
-    user_name = auth_user()
     main_library_function(user_name)
+    
 else:
     print("Авторизация не пройдена.")
 
